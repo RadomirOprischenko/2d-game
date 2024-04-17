@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityTechnologies/Playground/Examples/Maze/MazeLevel0.unity
     guid: 029e597475c3944a5b42678232c2822b
-  - enabled: 1
+  - enabled: 0
     path: Assets/UnityTechnologies/Playground/Examples/Maze/MazeLevel1.unity
     guid: f9b71d909be1c4e9dbb8b3599d76b33c
   - enabled: 0
