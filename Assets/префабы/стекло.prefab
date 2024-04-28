@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2963154472966331435
+--- !u!1 &6888712777516117464
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4812778522226661535}
-  - component: {fileID: 5140448097880007498}
-  - component: {fileID: 6757405709710654583}
-  - component: {fileID: 2416199366426838477}
+  - component: {fileID: 6456973912340416927}
+  - component: {fileID: 213670075589968486}
+  - component: {fileID: 4398651123083992299}
+  - component: {fileID: 601230672333654915}
   m_Layer: 0
-  m_Name: "\u0440\u0430\u043A\u0443\u0448\u043A\u0430"
+  m_Name: "\u0441\u0442\u0435\u043A\u043B\u043E"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4812778522226661535
+--- !u!4 &6456973912340416927
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2963154472966331435}
+  m_GameObject: {fileID: 6888712777516117464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.83, y: 0.13, z: 0}
-  m_LocalScale: {x: 0.18290289, y: 0.1828781, z: 0.4846401}
+  m_LocalPosition: {x: 29.96, y: -0.12, z: 0}
+  m_LocalScale: {x: 0.20045134, y: 0.20045134, z: 0.20045134}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5140448097880007498
+--- !u!212 &213670075589968486
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2963154472966331435}
+  m_GameObject: {fileID: 6888712777516117464}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -74,25 +74,39 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 7
-  m_Sprite: {fileID: 21300000, guid: 1b5c5fd54e2cecd4684e73ae28e1d15c, type: 3}
+  m_SortingOrder: 9
+  m_Sprite: {fileID: 21300000, guid: 0c7aa67bc58065848aab25f4cf07ef1f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 4.99, y: 4.99}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &6757405709710654583
+--- !u!114 &4398651123083992299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6888712777516117464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7f86633aef54b0dbb99c07a0a64442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resourceIndex: 3
+  amount: 1
+--- !u!61 &601230672333654915
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2963154472966331435}
+  m_GameObject: {fileID: 6888712777516117464}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -122,26 +136,12 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4.99, y: 4.99}
-    newSize: {x: 4.99, y: 4.99}
+    oldSize: {x: 2.56, y: 2.56}
+    newSize: {x: 2.56, y: 2.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.99, y: 4.99}
+  m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!114 &2416199366426838477
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2963154472966331435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7f86633aef54b0dbb99c07a0a64442, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resourceIndex: 7
-  amount: 1
