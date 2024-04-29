@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4781232061173703632}
   - component: {fileID: 7679531354967144920}
   - component: {fileID: 7551286678896701388}
+  - component: {fileID: 2069316755814033882}
   m_Layer: 6
   m_Name: "\u0432\u043E\u0434\u043E\u043B\u0430\u0437"
   m_TagString: Player
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidbody2D: {fileID: 0}
   key: 32
-  jumpStrength: 16
+  jumpStrength: 18
   groundTag: Ground
   checkGround: 1
 --- !u!95 &4781232061173703632
@@ -221,3 +222,16 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.008}
   m_Size: {x: 0.1, y: 0.0001}
   m_Direction: 0
+--- !u!114 &2069316755814033882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4317326798810761315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167be392debc249aa1f205567b6f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miningKey: 101
