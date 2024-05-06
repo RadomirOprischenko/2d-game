@@ -23,10 +23,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityTechnologies/Playground/Examples/Roguelike/Roguelike.unity
     guid: ad15a26015e49439387b05c22fe7a962
-  - enabled: 1
+  - enabled: 0
     path: Assets/worlt.unity
     guid: e8451b5ab7f76c44f9bbbe39432cb874
-  - enabled: 1
+  - enabled: 0
     path: Assets/haus.unity
     guid: 840b10bf4507a634da550d4dbb735589
   m_configObjects: {}
