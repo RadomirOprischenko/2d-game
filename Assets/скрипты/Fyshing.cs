@@ -1,22 +1,24 @@
+
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Fishing : MonoBehaviour
 {
-    public GameObject bobberPrefab; // Префаб поплавка
-    public Vector3 bobberSpawnPosition; // Координаты появления поплавка
+    public List<Fish> fishList; // Список рыб
     private GameObject currentBobber; // Текущий поплавок
     private bool isFishBiting = false; // Флаг поклевки
     private bool isReelingIn = false; // Флаг вытаскивания рыбы
     private float timeToBite; // Время до поклевки
     private float reactionTime = 2f; // Время для реакции
     private float holdTime = 2f; // Время удержания для ловли рыбы
+    private Fish currentFish; // Текущая рыба
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E) && currentBobber == null)
         {
-            SpawnBobber(bobberSpawnPosition);
+            SpawnBobber();
         }
 
         if (isFishBiting && Input.GetKeyDown(KeyCode.E))
@@ -31,10 +33,40 @@ public class Fishing : MonoBehaviour
         }
     }
 
-    void SpawnBobber(Vector3 position)
+    void SpawnBobber()
     {
-        currentBobber = Instantiate(bobberPrefab, position, Quaternion.identity);
-        StartCoroutine(FishBiteCoroutine());
+        currentFish = SelectRandomFish();
+        if (currentFish != null)
+        {
+            Vector3 bobberSpawnPosition = transform.position; // Начальная позиция поплавка
+            currentBobber = Instantiate(currentFish.prefab, bobberSpawnPosition, Quaternion.identity);
+            StartCoroutine(FishBiteCoroutine());
+        }
+    }
+
+    Fish SelectRandomFish()
+    {
+        float totalChance = 0f;
+        foreach (Fish fish in fishList)
+        {
+            totalChance += fish.spawnChance;
+        }
+
+        float randomPoint = Random.value * totalChance;
+
+        foreach (Fish fish in fishList)
+        {
+            if (randomPoint < fish.spawnChance)
+            {
+                return fish;
+            }
+            else
+            {
+                randomPoint -= fish.spawnChance;
+            }
+        }
+
+        return null;
     }
 
     IEnumerator FishBiteCoroutine()
@@ -85,7 +117,7 @@ public class Fishing : MonoBehaviour
 
         if (holdTimer >= holdTime)
         {
-            Debug.Log("Fish caught!");
+            Debug.Log("Fish caught! Caught: " + currentFish.name);
             isFishBiting = false;
             isReelingIn = false;
             Destroy(currentBobber);
