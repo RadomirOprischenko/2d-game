@@ -11,6 +11,7 @@ public class Fishing : MonoBehaviour
     public GameObject fishCaughtUI; // UI element to display caught fish
     public Image fishIcon; // UI element for the fish icon
     public Text fishNameText; // UI element for the fish name
+    public LineRenderer fishingLineRenderer; // Line renderer for the fishing line
 
     private GameObject currentBobber; // Current bobber instance
     private bool isFishBiting = false; // Flag for fish biting
@@ -20,6 +21,20 @@ public class Fishing : MonoBehaviour
     private float holdTime = 2f; // Time required to reel in the fish
     private Fish currentFish; // The fish that is currently being caught
     private Coroutine bobbingCoroutine; // Coroutine for bobber bobbing
+
+    void Start()
+    {
+        // Hide fish caught UI at the start
+        fishCaughtUI.SetActive(false);
+
+        // Hide line renderer at the start
+        if (fishingLineRenderer != null)
+        {
+            fishingLineRenderer.enabled = false;
+            fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
+            fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
+        }
+    }
 
     void Update()
     {
@@ -38,6 +53,12 @@ public class Fishing : MonoBehaviour
         {
             isReelingIn = false;
         }
+
+        // Update line renderer position
+        if (fishingLineRenderer != null && currentBobber != null)
+        {
+            fishingLineRenderer.SetPosition(1, currentBobber.transform.position);
+        }
     }
 
     void SpawnBobber()
@@ -46,6 +67,14 @@ public class Fishing : MonoBehaviour
         currentBobber = Instantiate(bobberPrefab, bobberSpawnPosition, Quaternion.identity);
         bobbingCoroutine = StartCoroutine(BobberBobbing());
         StartCoroutine(FishBiteCoroutine());
+
+        // Show line renderer
+        if (fishingLineRenderer != null)
+        {
+            fishingLineRenderer.enabled = true;
+            fishingLineRenderer.SetPosition(0, transform.position); // Set line renderer start position to player
+            fishingLineRenderer.SetPosition(1, currentBobber.transform.position); // Set line renderer end position to bobber
+        }
     }
 
     Fish SelectRandomFish()
@@ -106,23 +135,23 @@ public class Fishing : MonoBehaviour
     {
         float holdTimer = 0f;
         Vector3 startPosition = currentBobber.transform.position;
-        Vector3 endPosition = new Vector3(transform.position.x, startPosition.y, startPosition.z);
 
         while (isReelingIn && holdTimer < holdTime)
         {
             holdTimer += Time.deltaTime;
+            Vector3 endPosition = new Vector3(transform.position.x, currentBobber.transform.position.y, startPosition.z);
 
             // Move the bobber towards the player only horizontally
             if (currentBobber != null)
             {
-                currentBobber.transform.position = Vector3.MoveTowards(
-                    currentBobber.transform.position,
-                    endPosition,
-                    Time.deltaTime * (1f / holdTime) * Vector3.Distance(startPosition, endPosition)
+                currentBobber.transform.position = new Vector3(
+                    Mathf.MoveTowards(currentBobber.transform.position.x, endPosition.x, Time.deltaTime * Vector3.Distance(startPosition, endPosition) / holdTime),
+                    currentBobber.transform.position.y,
+                    currentBobber.transform.position.z
                 );
 
-                // Check if the difference in X positions is less than 1.0
-                if (Mathf.Abs(currentBobber.transform.position.x - transform.position.x) < 1.0f)
+                // Check if the difference in X positions is less than 0.1 (to account for floating point imprecision)
+                if (Mathf.Abs(currentBobber.transform.position.x - transform.position.x) < 0.1f)
                 {
                     CatchFish();
                     yield break;
@@ -153,6 +182,14 @@ public class Fishing : MonoBehaviour
         Destroy(currentBobber);
         currentBobber = null;
 
+        // Hide line renderer after catching fish
+        if (fishingLineRenderer != null)
+        {
+            fishingLineRenderer.enabled = false;
+            fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
+            fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
+        }
+
         // Display the fish's name and icon
         fishNameText.text = currentFish.name;
         fishIcon.sprite = currentFish.prefab.GetComponent<SpriteRenderer>().sprite;
@@ -168,18 +205,21 @@ public class Fishing : MonoBehaviour
 
     IEnumerator BobberBobbing(bool fishBiting = false)
     {
-        float amplitude = fishBiting ? 0.5f : 0.2f;
-        float frequency = fishBiting ? 2f : 1f;
+        float amplitude = fishBiting ? 0.8f : 0.4f; // Increased amplitude when reeling
+        float frequency = fishBiting ? 3f : 1.5f; // Increased frequency when reeling
         Vector3 startPosition = currentBobber.transform.position;
 
-        while (true)
+        while (currentBobber != null)
         {
             float bobbingOffset = Mathf.Sin(Time.time * frequency) * amplitude;
-            currentBobber.transform.position = new Vector3(
-                startPosition.x,
-                startPosition.y + bobbingOffset,
-                startPosition.z
-            );
+            if (currentBobber != null)
+            {
+                currentBobber.transform.position = new Vector3(
+                    currentBobber.transform.position.x, // Maintain the current x position
+                    startPosition.y + bobbingOffset,
+                    currentBobber.transform.position.z
+                );
+            }
             yield return null;
         }
     }
