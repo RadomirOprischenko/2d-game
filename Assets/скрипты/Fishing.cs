@@ -12,6 +12,7 @@ public class Fishing : MonoBehaviour
     public Image fishIcon; // UI element for the fish icon
     public Text fishNameText; // UI element for the fish name
     public LineRenderer fishingLineRenderer; // Line renderer for the fishing line
+    public KeyCode reelingKey = KeyCode.E; // Key for reeling in
 
     private GameObject currentBobber; // Current bobber instance
     private bool isFishBiting = false; // Flag for fish biting
@@ -21,6 +22,13 @@ public class Fishing : MonoBehaviour
     private float holdTime = 2f; // Time required to reel in the fish
     private Fish currentFish; // The fish that is currently being caught
     private Coroutine bobbingCoroutine; // Coroutine for bobber bobbing
+    private bool isPlayerInRange = false; // Flag to check if the player is in range
+    private Move playerMoveScript; // Reference to the player's Move script
+    private bool canCancelFishing = false; // Flag to check if fishing can be canceled
+    private float cancelDelay = 0.5f; // Delay after spawning the bobber before it can be canceled
+
+
+
 
     void Start()
     {
@@ -34,22 +42,49 @@ public class Fishing : MonoBehaviour
             fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
             fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
         }
+
+        // Find the player object by tag and get the Move component
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerMoveScript = player.GetComponent<Move>();
+        }
     }
+
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && currentBobber == null)
+        if (Input.GetKeyDown(reelingKey) && currentBobber == null && isPlayerInRange)
         {
             SpawnBobber();
+            playerMoveScript.enabled = false; // Disable player movement
         }
 
-        if (isFishBiting && Input.GetKeyDown(KeyCode.E) && !isReelingIn)
+        if (Input.GetKeyDown(reelingKey) && currentBobber != null && !isFishBiting && canCancelFishing)
+        {
+            Debug.Log("No fish biting. Fishing failed.");
+            Destroy(currentBobber);
+            currentBobber = null;
+
+            // Re-enable player movement
+            playerMoveScript.enabled = true;
+
+            // Hide line renderer when fishing fails
+            if (fishingLineRenderer != null)
+            {
+                fishingLineRenderer.enabled = false;
+                fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
+                fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
+            }
+        }
+
+        if (isFishBiting && Input.GetKeyDown(reelingKey) && !isReelingIn)
         {
             isReelingIn = true;
             StartCoroutine(HoldToCatchFish());
         }
 
-        if (isReelingIn && Input.GetKeyUp(KeyCode.E))
+        if (isReelingIn && Input.GetKeyUp(reelingKey))
         {
             isReelingIn = false;
         }
@@ -61,12 +96,17 @@ public class Fishing : MonoBehaviour
         }
     }
 
+
+
+
+
     void SpawnBobber()
     {
         Vector3 bobberSpawnPosition = bobberSpawnPoint.position; // Specific spawn position for the bobber
         currentBobber = Instantiate(bobberPrefab, bobberSpawnPosition, Quaternion.identity);
         bobbingCoroutine = StartCoroutine(BobberBobbing());
         StartCoroutine(FishBiteCoroutine());
+        StartCoroutine(CancelFishingDelay());
 
         // Show line renderer
         if (fishingLineRenderer != null)
@@ -76,6 +116,7 @@ public class Fishing : MonoBehaviour
             fishingLineRenderer.SetPosition(1, currentBobber.transform.position); // Set line renderer end position to bobber
         }
     }
+
 
     Fish SelectRandomFish()
     {
@@ -113,7 +154,7 @@ public class Fishing : MonoBehaviour
         if (currentFish != null)
         {
             isFishBiting = true;
-            Debug.Log("Fish is biting! Press and hold E to catch!");
+            Debug.Log("Fish is biting! Press and hold " + reelingKey.ToString() + " to catch!");
             StopCoroutine(bobbingCoroutine);
             bobbingCoroutine = StartCoroutine(BobberBobbing(true));
 
@@ -127,6 +168,17 @@ public class Fishing : MonoBehaviour
                 isFishBiting = false;
                 Destroy(currentBobber);
                 currentBobber = null;
+
+                // Re-enable player movement
+                playerMoveScript.enabled = true;
+
+                // Hide line renderer when the fish gets away
+                if (fishingLineRenderer != null)
+                {
+                    fishingLineRenderer.enabled = false;
+                    fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
+                    fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
+                }
             }
         }
     }
@@ -171,8 +223,29 @@ public class Fishing : MonoBehaviour
             isFishBiting = false;
             Destroy(currentBobber);
             currentBobber = null;
+
+            // Re-enable player movement
+            playerMoveScript.enabled = true;
+
+            // Hide line renderer when stopping reeling in
+            if (fishingLineRenderer != null)
+            {
+                fishingLineRenderer.enabled = false;
+                fishingLineRenderer.SetPosition(0, new Vector3(1000f, 1000f, 0f)); // Set start position to a distant point
+                fishingLineRenderer.SetPosition(1, new Vector3(1000f, 1000f, 0f)); // Set end position to a distant point
+            }
         }
+
+
     }
+
+    IEnumerator CancelFishingDelay()
+    {
+        canCancelFishing = false;
+        yield return new WaitForSeconds(cancelDelay);
+        canCancelFishing = true;
+    }
+
 
     void CatchFish()
     {
@@ -181,6 +254,9 @@ public class Fishing : MonoBehaviour
         isReelingIn = false;
         Destroy(currentBobber);
         currentBobber = null;
+
+        // Re-enable player movement
+        playerMoveScript.enabled = true;
 
         // Hide line renderer after catching fish
         if (fishingLineRenderer != null)
@@ -197,6 +273,7 @@ public class Fishing : MonoBehaviour
         StartCoroutine(HideFishCaughtUI());
     }
 
+
     IEnumerator HideFishCaughtUI()
     {
         yield return new WaitForSeconds(2f);
@@ -205,22 +282,43 @@ public class Fishing : MonoBehaviour
 
     IEnumerator BobberBobbing(bool fishBiting = false)
     {
-        float amplitude = fishBiting ? 0.8f : 0.4f; // Increased amplitude when reeling
-        float frequency = fishBiting ? 3f : 1.5f; // Increased frequency when reeling
-        Vector3 startPosition = currentBobber.transform.position;
-
-        while (currentBobber != null)
+        if (currentBobber == null) yield return null;
+        else
         {
-            float bobbingOffset = Mathf.Sin(Time.time * frequency) * amplitude;
-            if (currentBobber != null)
+            float amplitude = fishBiting ? 0.8f : 0.4f; // Increased amplitude when reeling
+            float frequency = fishBiting ? 3f : 1.5f; // Increased frequency when reeling
+            Vector3 startPosition = currentBobber.transform.position;
+
+            while (currentBobber != null)
             {
-                currentBobber.transform.position = new Vector3(
-                    currentBobber.transform.position.x, // Maintain the current x position
-                    startPosition.y + bobbingOffset,
-                    currentBobber.transform.position.z
-                );
+                float bobbingOffset = Mathf.Sin(Time.time * frequency) * amplitude;
+                if (currentBobber != null)
+                {
+                    currentBobber.transform.position = new Vector3(
+                        currentBobber.transform.position.x, // Maintain the current x position
+                        startPosition.y + bobbingOffset,
+                        currentBobber.transform.position.z
+                    );
+                }
+                yield return null;
             }
-            yield return null;
         }
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerInRange = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerInRange = false;
+        }
+    }
+
 }
