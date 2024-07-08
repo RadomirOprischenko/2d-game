@@ -1,23 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
-public class InventoryDisplay : MonoBehaviour
+public class инвентарь : MonoBehaviour
 {
-    public GameObject inventory;
-
     // Start is called before the first frame update
     void Start()
     {
-
+        Debug.Log("HHHHiiii");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown("i"))
         {
-            inventory.SetActive(!inventory.activeSelf);
+            gameObject.SetActive(false);
         }
     }
 }
